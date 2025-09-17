@@ -1,4 +1,4 @@
-package org.example.logistic.exceptions;
+package org.example.domain.exceptions;
 
 public class DeliveryValidationException extends DeliveryException {
     public DeliveryValidationException(String message) {

@@ -1,22 +1,23 @@
-package org.example.infrastructure.promocoes;
+package org.example.infrastructure.promotions;
 
-import org.example.logistica.entities.Entrega;
-import org.example.logistica.entities.TipoFrete;
-import org.example.logistica.interfaces.PromocaoFrete;
+import org.example.domain.entities.Delivery;
+import org.example.domain.entities.ShippingType;
+import org.example.domain.interfaces.ShippingPromotion;
 
-public class PromocaoFreteGratis implements PromocaoFrete {
+public class FreeShippingPromotion implements ShippingPromotion {
     @Override
-    public boolean seAplica(Entrega entrega) {
-        return entrega.getTipoFrete() == TipoFrete.ECONOMICO && entrega.getPeso() < 2;
+    public boolean applies(Delivery delivery) {
+        return delivery.getShippingType() == ShippingType.ECONOMIC && delivery.getWeight() < 2;
     }
 
     @Override
-    public double aplicarDesconto(double valorOriginal, Entrega entrega) {
+    public double applyDiscount(double originalAmount, Delivery delivery) {
         return 0.0;
     }
 
     @Override
-    public String getDescricao() {
-        return "Frete grátis para entregas econômicas até 2kg";
+    public String getDescription() {
+        return "Frete grátis para fretes econômicos em até 2kg";
     }
 }
+

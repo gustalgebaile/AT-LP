@@ -1,47 +1,46 @@
 package org.example.application.services;
 
-import org.example.infrastructure.frete.calculadoras.FreteEconomico;
-import org.example.infrastructure.frete.calculadoras.FreteExpresso;
-import org.example.infrastructure.frete.calculadoras.FretePadrao;
-import org.example.logistica.entities.Entrega;
-import org.example.logistica.entities.TipoFrete;
-import org.example.logistica.interfaces.CalculadoraFrete;
+import org.example.application.common.OperationResult;
+import org.example.domain.entities.Delivery;
 
-import java.util.Map;
+public class LabelService {
+    private final ShippingCalculationService shippingService;
 
-public class EtiquetaService {
-    private final Map<TipoFrete, CalculadoraFrete> calculadoras;
-
-    public EtiquetaService() {
-        this.calculadoras = Map.of(
-                TipoFrete.EXPRESSO, new FreteExpresso(),
-                TipoFrete.PADRAO, new FretePadrao(),
-                TipoFrete.ECONOMICO, new FreteEconomico()
-        );
+    public LabelService(ShippingCalculationService shippingService) {
+        this.shippingService = shippingService;
     }
 
-    public String gerarEtiqueta(Entrega entrega) {
-        double valorFrete = calcularFrete(entrega);
-        return String.format("Destinatário: %s%nEndereço: %s%nValor do Frete: R$%.2f",
-                entrega.getDestinatario(), entrega.getEndereco(), valorFrete);
-    }
-
-    public String gerarResumoPedido(Entrega entrega) {
-        double valorFrete = calcularFrete(entrega);
-        return String.format("Pedido para %s com frete tipo %s no valor de R$%.2f",
-                entrega.getDestinatario(), entrega.getTipoFrete().getCodigo(), valorFrete);
-    }
-
-    private double calcularFrete(Entrega entrega) {
-        CalculadoraFrete calculadora = calculadoras.get(entrega.getTipoFrete());
-        if (calculadora == null) {
-            throw new IllegalStateException("Calculadora não encontrada para tipo: " + entrega.getTipoFrete());
+    public OperationResult<String> generateBasicLabel(Delivery delivery) {
+        OperationResult<Double> shippingResult = shippingService.calculate(delivery);
+        if (!shippingResult.isSuccess()) {
+            return OperationResult.failure("Erro de Cálculo do Frete: " + shippingResult.getError());
         }
-        return calculadora.calcular(entrega.getPeso());
+
+        String label = String.format(
+                "Destinatário: %s%nEndereço: %s%nCusto do Frete: $%.2f",
+                delivery.getRecipient(),
+                delivery.getAddress(),
+                shippingResult.getValue()
+        );
+
+        return OperationResult.success(label);
     }
 
-    public boolean isFreteGratis(Entrega entrega) {
-        return entrega.getTipoFrete() == TipoFrete.ECONOMICO && entrega.getPeso() < 2;
+    public OperationResult<String> generateOrderSummary(Delivery delivery) {
+        OperationResult<Double> shippingResult = shippingService.calculate(delivery);
+        if (!shippingResult.isSuccess()) {
+            return OperationResult.failure("Erro de Cálculo do Frete: " + shippingResult.getError());
+        }
+
+        String summary = String.format(
+                "Pedido para %s com %s frete de $%.2f",
+                delivery.getRecipient(),
+                delivery.getShippingType().getCode(),
+                shippingResult.getValue()
+        );
+
+        return OperationResult.success(summary);
     }
 }
+
 

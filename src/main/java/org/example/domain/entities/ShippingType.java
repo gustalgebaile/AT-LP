@@ -1,4 +1,4 @@
-package org.example.logistic.entities;
+package org.example.domain.entities;
 
 public enum ShippingType {
     EXPRESS("EXP"),

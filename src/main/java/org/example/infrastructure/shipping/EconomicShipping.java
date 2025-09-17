@@ -1,7 +1,7 @@
-package org.example.infrastructure.frete.calculadoras;
+package org.example.infrastructure.shipping;
 
-import org.example.logistica.entities.ShippingType;
-import org.example.logistica.interfaces.ShippingCalculator;
+import org.example.domain.entities.ShippingType;
+import org.example.domain.interfaces.ShippingCalculator;
 
 public class EconomicShipping implements ShippingCalculator {
     private static final double MULTIPLIER = 1.1;

@@ -1,24 +1,25 @@
 package org.example.infrastructure.promotions;
 
-import org.example.logistica.entities.Entrega;
-import org.example.logistica.interfaces.PromocaoFrete;
+import org.example.domain.entities.Delivery;
+import org.example.domain.interfaces.ShippingPromotion;
 
-public class PromocaoPesoAlto implements PromocaoFrete {
-    private static final double PESO_MINIMO = 10.0;
-    private static final double DESCONTO_PERCENTUAL = 0.10;
+public class HeavyWeightPromotion implements ShippingPromotion {
+    private static final double MINIMUM_WEIGHT = 10.0;
+    private static final double DISCOUNT_PERCENTAGE = 0.10;
 
     @Override
-    public boolean seAplica(Entrega entrega) {
-        return entrega.getPeso() > PESO_MINIMO;
+    public boolean applies(Delivery delivery) {
+        return delivery.getWeight() > MINIMUM_WEIGHT;
     }
 
     @Override
-    public double aplicarDesconto(double valorOriginal, Entrega entrega) {
-        return valorOriginal * (1 - DESCONTO_PERCENTUAL);
+    public double applyDiscount(double originalAmount, Delivery delivery) {
+        return originalAmount * (1 - DISCOUNT_PERCENTAGE);
     }
 
     @Override
-    public String getDescricao() {
-        return "10% de desconto para entregas acima de " + PESO_MINIMO + "kg";
+    public String getDescription() {
+        return "10% de desconto para entregas acima de" + MINIMUM_WEIGHT + "kg";
     }
 }
+

@@ -1,9 +1,12 @@
 package org.example.application.services;
 
 import org.example.application.common.OperationResult;
-import org.example.logistica.entities.Delivery;
-import org.example.logistica.entities.ShippingType;
-import org.example.logistica.interfaces.ShippingCalculator;
+import org.example.infrastructure.shipping.EconomicShipping;
+import org.example.infrastructure.shipping.ExpressShipping;
+import org.example.infrastructure.shipping.StandardShipping;
+import org.example.domain.entities.Delivery;
+import org.example.domain.entities.ShippingType;
+import org.example.domain.interfaces.ShippingCalculator;
 
 import java.util.Map;
 
@@ -20,7 +23,7 @@ public class ShippingCalculationService {
         try {
             ShippingCalculator calculator = calculators.get(delivery.getShippingType());
             if (calculator == null) {
-                return OperationResult.failure("Shipping type not supported: " + delivery.getShippingType());
+                return OperationResult.failure("Tipo de Frete não Suportado: " + delivery.getShippingType());
             }
 
             double baseAmount = calculator.calculate(delivery.getWeight());
@@ -28,14 +31,14 @@ public class ShippingCalculationService {
 
             return OperationResult.success(Math.max(0, finalAmount));
         } catch (Exception e) {
-            return OperationResult.failure("Calculation error: " + e.getMessage());
+            return OperationResult.failure("Erro de Cálculo: " + e.getMessage());
         }
     }
 
     public boolean isFreeShipping(Delivery delivery) {
         return promotionManager.getApplicablePromotions(delivery)
                 .stream()
-                .anyMatch(desc -> desc.toLowerCase().contains("free"));
+                .anyMatch(desc -> desc.toLowerCase().contains("gratis"));
     }
 
     private Map<ShippingType, ShippingCalculator> initializeCalculators() {

@@ -1,40 +1,41 @@
 package org.example.application.services;
 
-import org.example.logistica.interfaces.PromocaoFrete;
-import org.example.infrastructure.promotions.PromocaoFreteGratis;
-import org.example.infrastructure.promotions.PromocaoPesoAlto;
-import org.example.logistica.entities.Entrega;
+import org.example.infrastructure.promotions.FreeShippingPromotion;
+import org.example.infrastructure.promotions.HeavyWeightPromotion;
+import org.example.domain.entities.Delivery;
+import org.example.domain.interfaces.ShippingPromotion;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class GerenciadorPromocoes {
-    private final List<PromocaoFrete> promocoes;
+public class PromotionManager {
+    private final List<ShippingPromotion> promotions;
 
-    public GerenciadorPromocoes() {
-        this.promocoes = new ArrayList<>();
-        promocoes.add(new PromocaoFreteGratis());
-        promocoes.add(new PromocaoPesoAlto());
+    public PromotionManager() {
+        this.promotions = new ArrayList<>();
+        promotions.add(new FreeShippingPromotion());
+        promotions.add(new HeavyWeightPromotion());
     }
 
-    public void adicionarPromocao(PromocaoFrete promocao) {
-        promocoes.add(promocao);
+    public void addPromotion(ShippingPromotion promotion) {
+        promotions.add(promotion);
     }
 
-    public double calcularComPromocoes(double valorOriginal, Entrega entrega) {
-        return promocoes.stream()
-                .filter(promocao -> promocao.seAplica(entrega))
+    public double calculateWithPromotions(double originalAmount, Delivery delivery) {
+        return promotions.stream()
+                .filter(promotion -> promotion.applies(delivery))
                 .findFirst()
-                .map(promocao -> promocao.aplicarDesconto(valorOriginal, entrega))
-                .orElse(valorOriginal);
+                .map(promotion -> promotion.applyDiscount(originalAmount, delivery))
+                .orElse(originalAmount);
     }
 
-    public List<String> getPromocoesAplicaveis(Entrega entrega) {
-        return promocoes.stream()
-                .filter(promocao -> promocao.seAplica(entrega))
-                .map(PromocaoFrete::getDescricao)
+    public List<String> getApplicablePromotions(Delivery delivery) {
+        return promotions.stream()
+                .filter(promotion -> promotion.applies(delivery))
+                .map(ShippingPromotion::getDescription)
                 .collect(Collectors.toList());
     }
 }
+
 

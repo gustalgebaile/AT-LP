@@ -1,35 +1,36 @@
 package org.example.application.common;
 
-import org.example.logistica.exceptions.EntregaException;
+import org.example.domain.exceptions.DeliveryException;
 
-public class ResultadoOperacao<T> {
-    private final T valor;
-    private final String erro;
-    private final boolean sucesso;
+public class OperationResult<T> {
+    private final T value;
+    private final String error;
+    private final boolean success;
 
-    private ResultadoOperacao(T valor, String erro, boolean sucesso) {
-        this.valor = valor;
-        this.erro = erro;
-        this.sucesso = sucesso;
+    private OperationResult(T value, String error, boolean success) {
+        this.value = value;
+        this.error = error;
+        this.success = success;
     }
 
-    public static <T> ResultadoOperacao<T> sucesso(T valor) {
-        return new ResultadoOperacao<>(valor, null, true);
+    public static <T> OperationResult<T> success(T value) {
+        return new OperationResult<>(value, null, true);
     }
 
-    public static <T> ResultadoOperacao<T> erro(String mensagem) {
-        return new ResultadoOperacao<>(null, mensagem, false);
+    public static <T> OperationResult<T> failure(String message) {
+        return new OperationResult<>(null, message, false);
     }
 
-    public boolean isSucesso() { return sucesso; }
-    public T getValor() { return valor; }
-    public String getErro() { return erro; }
+    public boolean isSuccess() { return success; }
+    public T getValue() { return value; }
+    public String getError() { return error; }
 
-    public T getValorOrThrow() {
-        if (!sucesso) {
-            throw new EntregaException(erro);
+    public T getValueOrThrow() {
+        if (!success) {
+            throw new DeliveryException(error);
         }
-        return valor;
+        return value;
     }
 }
+
 

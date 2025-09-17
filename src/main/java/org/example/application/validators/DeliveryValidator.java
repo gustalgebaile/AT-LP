@@ -1,44 +1,44 @@
 package org.example.application.validators;
 
-import org.example.application.common.ResultadoOperacao;
-import org.example.logistica.entities.Entrega;
-import org.example.logistica.entities.TipoFrete;
+import org.example.application.common.OperationResult;
+import org.example.domain.entities.Delivery;
+import org.example.domain.entities.ShippingType;
 
-public class ValidadorEntrega {
+public class DeliveryValidator {
 
-    public static ResultadoOperacao<Entrega> validarECriar(String endereco, double peso,
-                                                           String tipoFreteStr, String destinatario) {
+    public static OperationResult<Delivery> validateAndCreate(String address, double weight,
+                                                              String shippingTypeStr, String recipient) {
         try {
-            // Validações específicas
-            if (endereco == null || endereco.trim().isEmpty()) {
-                return ResultadoOperacao.erro("Endereço é obrigatório");
+            if (address == null || address.trim().isEmpty()) {
+                return OperationResult.failure("Endereço é Necessário");
             }
 
-            if (peso < 0) {
-                return ResultadoOperacao.erro("Peso deve ser positivo");
+            if (weight < 0) {
+                return OperationResult.failure("O Peso de ser positivo");
             }
 
-            if (peso > 1000) {
-                return ResultadoOperacao.erro("Peso excede limite máximo de 1000kg");
+            if (weight > 1000) {
+                return OperationResult.failure("O peso excede o limite máximo limite de 1000kg");
             }
 
-            if (destinatario == null || destinatario.trim().isEmpty()) {
-                return ResultadoOperacao.erro("Destinatário é obrigatório");
+            if (recipient == null || recipient.trim().isEmpty()) {
+                return OperationResult.failure("Destinatário é Necessário");
             }
 
-            TipoFrete tipoFrete;
+            ShippingType shippingType;
             try {
-                tipoFrete = TipoFrete.fromCodigo(tipoFreteStr);
+                shippingType = ShippingType.fromCode(shippingTypeStr);
             } catch (IllegalArgumentException e) {
-                return ResultadoOperacao.erro("Tipo de frete inválido: " + tipoFreteStr);
+                return OperationResult.failure("Tipo de Frete Inválido: " + shippingTypeStr);
             }
 
-            Entrega entrega = new Entrega(endereco.trim(), peso, tipoFrete, destinatario.trim());
-            return ResultadoOperacao.sucesso(entrega);
+            Delivery delivery = new Delivery(address.trim(), weight, shippingType, recipient.trim());
+            return OperationResult.success(delivery);
 
         } catch (Exception e) {
-            return ResultadoOperacao.erro("Erro inesperado na validação: " + e.getMessage());
+            return OperationResult.failure("Erro de Validação Inesperado: " + e.getMessage());
         }
     }
 }
+
 

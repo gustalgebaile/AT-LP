@@ -1,4 +1,4 @@
-package org.example.logistic.exceptions;
+package org.example.domain.exceptions;
 
 public class ShippingCalculationException extends DeliveryException {
     public ShippingCalculationException(String message) {

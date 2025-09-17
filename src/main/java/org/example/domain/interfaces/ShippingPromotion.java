@@ -1,6 +1,6 @@
-package org.example.logistic.interfaces;
+package org.example.domain.interfaces;
 
-import org.example.logistic.entities.Delivery;
+import org.example.domain.entities.Delivery;
 
 public interface ShippingPromotion {
     boolean applies(Delivery delivery);
